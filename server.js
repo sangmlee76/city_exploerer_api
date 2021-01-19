@@ -21,6 +21,11 @@ app.get('/', (request, response) => {
 });
 
 app.get('/location', (req, res) => {
+  if(req.query.city === ''){
+    res.status(500).send('Sorry, something went wrong');
+    return;
+  }
+  
   const dataArrayFromTheLocationJson = require('./data/location.json');
   const dataObjFromJson = dataArrayFromTheLocationJson[0];
 
@@ -38,18 +43,26 @@ app.get('/location', (req, res) => {
 
 app.get('/weather', (req, res) => {
   const data = require('./data/weather.json');
-  const
+  const arr = [];
+
 });
 
   //========= Helper Functions =========//
   //Constructor goes here//
 
-  function Location(search_query, formatted_query, latitude, longitude) {
-    this.search_query = search_query;
-    this.formatted_query = formatted_query; // what is this? Need to revisit lecture video
-    this.longitude = longitude;
-    this.latitude = latitude;
-  }
+function Location(search_query, formatted_query, latitude, longitude) {
+  this.search_query = search_query;
+  this.formatted_query = formatted_query; // what is this? Need to revisit lecture video
+  this.longitude = longitude;
+  this.latitude = latitude;
+}
+
+function Weather(jsonObj){
+  this.search_query = jsonObj.search_query;
+  this.forecast = jsonObj.data.weather.description;
+  this.time = jsonObj.data.valid_date;
+}
+
 
   //=========== Start Server ===========//
   app.listen(PORT, () => console.log(`we are up on PORT ${PORT}`));
