@@ -1,5 +1,6 @@
-**Author**: Your Name Goes Here
-**Version**: 1.0.0 (increment the patch/fix version number if you make more commits past your first submission)
+**Author**: Sang Lee | sanglee76@yahoo.com
+**Version**: 1.0.0 
+<!--(increment the patch/fix version number if you make more commits past your first submission)-->
 
 ## Overview
 Provides a web-app that provides a user with access to local area "things to do" or explore a given city (hence the name **City Explorer**). It provides information on the location of the city provide by a mapping service, top restaurants as posted by Yelp, movies playing in the local area, and a list of popular hikes/national parks.
