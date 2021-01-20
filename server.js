@@ -4,6 +4,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const superagent = require('superagent');
 
 
 //===== Setup Application (Server) ====//
@@ -16,30 +17,35 @@ const PORT = process.env.PORT || 3111;
 
 
 //========== Setup Routes ============//
-app.get('/', (request, response) => {
-  response.send('you made it home');
-});
-
 app.get('/location', (req, res) => {
   if(req.query.city === ''){
     res.status(500).send('Sorry, something went wrong');
     return;
   }
   
-  const dataArrayFromTheLocationJson = require('./data/location.json');
-  const dataObjFromJson = dataArrayFromTheLocationJson[0];
-
   const searchedCity = req.query.city; //comes from the front-end, req.query is the way we get data from the front-end.
+  console.log(searchedCity);
+  const key = process.env.LOCATION_API_KEY;
 
+  const url = `https://us1.locationiq.com/v1/search.php?key=${key}&q=${searchedCity}&format=json`; 
+  
+  superagent.get(url)
+    .then(result => {
+      const dataObjFromJson = result.body[0];   //TODO: see video to see where .body comes from
+    });
 
-  const newLocation = new Location(
-    searchedCity,
-    dataObjFromJson.display_name,
-    dataObjFromJson.lat,
-    dataObjFromJson.lon
-  );
-  res.send(newLocation);
-});
+      const newLocation = new Location(
+        searchedCity,
+        dataObjFromJson.display_name,
+        dataObjFromJson.lat,
+        dataObjFromJson.lon
+      );
+      res.send(newLocation);
+    })
+    .catch(error => {
+      res.status(500).send('LocationIQ failed');
+      console.log(error.message)
+    });
 
 app.get('/weather', (req, res) => {
   const weatherData = require('./data/weather.json');
