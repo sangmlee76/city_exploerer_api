@@ -1,5 +1,5 @@
 **Author**: Sang Lee | sanglee76@yahoo.com
-**Version**: 1.0.0 
+**Version**: 1.1.0 
 <!--(increment the patch/fix version number if you make more commits past your first submission)-->
 
 ## Overview
@@ -14,10 +14,14 @@ Build a stand-alone back end which will interact with a static front end. It wil
 <!-- Provide a detailed description of the application design. What technologies (languages, libraries, etc) you're using, and any other relevant design information. -->
 
 ## Change Log
+01-18-2021 1100PST - Application now has a fully-functional express server, with a GET route for the location resource.
 
-01-18-2021 11:00pm - Application now has a fully-functional express server, with a GET route for the location resource.
+01-19-2021 2119PST - /location route with LocationIQ complete
 
-01-19-2021 5:00pm - 
+01-19-2021 2210PST - /weather route with Weatherbit complete
+
+01-19-2021 PST - /parks route with NPS 
+
 
 
 ## Credits and Collaborations
