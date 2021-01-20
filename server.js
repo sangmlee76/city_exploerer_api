@@ -3,16 +3,16 @@
 //=========== Load Packages ==========//
 const express = require('express');
 const cors = require('cors');
-const { response } = require('express');
 require('dotenv').config();
 
-//===== Setup Application (Sever) ====//
+
+//===== Setup Application (Server) ====//
 const app = express();
 app.use(cors());
 
+
 //======== Global Variables ==========//
 const PORT = process.env.PORT || 3111;
-
 
 
 //========== Setup Routes ============//
@@ -42,26 +42,30 @@ app.get('/location', (req, res) => {
 });
 
 app.get('/weather', (req, res) => {
-  const data = require('./data/weather.json');
-  const arr = [];
-
+  const weatherData = require('./data/weather.json');
+  const arr = weatherData.data.map(weatherObject => {
+    const newWeatherObj = new Weather(weatherObject);
+    return newWeatherObj;
+  });
+  res.send(arr);
 });
+
 
   //========= Helper Functions =========//
   //Constructor goes here//
 
 function Location(search_query, formatted_query, latitude, longitude) {
   this.search_query = search_query;
-  this.formatted_query = formatted_query; // what is this? Need to revisit lecture video
+  this.formatted_query = formatted_query; // this is what the front-end is calling the type of data they are looking for -- the query that is being passed in is being formatted and has been assigned as "formatted_query" -- this means that if the front-end calls this something else, then we will change this accordingly.
   this.longitude = longitude;
   this.latitude = latitude;
 }
 
-function Weather(jsonObj){
-  this.search_query = jsonObj.search_query;
-  this.forecast = jsonObj.data.weather.description;
-  this.time = jsonObj.data.valid_date;
+function Weather(weatherObject){
+  this.forecast = weatherObject.weather.description;
+  this.time = weatherObject.valid_date;
 }
+
 
 
   //=========== Start Server ===========//
