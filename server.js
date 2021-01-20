@@ -17,6 +17,8 @@ const PORT = process.env.PORT || 3111;
 
 
 //========== Setup Routes ============//
+
+//========(/location)=========//
 app.get('/location', (req, res) => {
   if (req.query.city === '') {
     res.status(500).send('Sorry, something went wrong');
@@ -31,7 +33,7 @@ app.get('/location', (req, res) => {
 
   superagent.get(url)
     .then(result => {
-      const dataObjFromJson = result.body[0];   //TODO: see video to see where .body comes from
+      const dataObjFromJson = result.body[0];   //TODO: see video to see where .body comes from --> @ 3:40.
 
 
       const newLocation = new Location(
@@ -48,10 +50,10 @@ app.get('/location', (req, res) => {
     });
 });
 
+//=========(/weather)==========//
 app.get('/weather', (req, res) => {
-  const weatherData = require('./data/weather.json');
-  const searchedCity = req.query.city;
-  console.log(searchedCity);
+  const searchedCity = req.query.search_query;
+  // console.log('*********** CITY*************' , searchedCity);
   const weatherApiKey = process.env.WEATHER_API_KEY;
   const latitude = req.query.latitude;
   const longitude = req.query.longitude;
@@ -74,6 +76,30 @@ app.get('/weather', (req, res) => {
     });
 });
 
+//=========(/parks)==========//
+app.get('/parks', (req, res) => {
+  const searchedCity = req.query.search_query;
+  // console.log('********** CITY ***********', searchedCity);
+  const parksApiKey = process.env.PARKS_API_KEY;
+
+  const url = `https://developer.nps.gov/api/v1/parks?q=${searchedCity}&api_key=${parksApiKey}`;
+
+  superagent.get(url)
+    .then(result => {
+      // console.log(result.body);
+
+      const arr = parksData.map(parkObject => {
+        const newParkObj = new Park(parkObject);
+        return newParkObj;
+      });
+      res.send(arr);
+    })
+    .catch(error => {
+      res.status(500).send('National Parks failed');
+      console.log(error.message);
+    });  
+});
+
 
 //========= Helper Functions =========//
 //Constructor goes here//
@@ -90,7 +116,13 @@ function Weather(weatherObject) {
   this.time = weatherObject.valid_date;
 }
 
-
+function Park(parkObject){
+  this.name = parkObject.name;
+  this.address = parkObject.address;
+  this.fee = parkObject.fee;
+  this.description = parkObject.description;
+  this.url = parkObject.url;
+}
 
 //=========== Start Server ===========//
 app.listen(PORT, () => console.log(`we are up on PORT ${PORT}`));
