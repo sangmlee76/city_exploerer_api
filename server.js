@@ -53,6 +53,8 @@ app.get('/weather', (req, res) => {
   const searchedCity = req.query.city;
   console.log(searchedCity);
   const weatherApiKey = process.env.WEATHER_API_KEY;
+  const latitude = req.query.latitude;
+  const longitude = req.query.longitude;
 
   const url = `https://api.weatherbit.io/v2.0/current?lat=${latitude}&lon=${longitude}&key=${weatherApiKey}&include=minutely`;
 
