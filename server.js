@@ -18,43 +18,58 @@ const PORT = process.env.PORT || 3111;
 
 //========== Setup Routes ============//
 app.get('/location', (req, res) => {
-  if (req.query.city === ''){
+  if (req.query.city === '') {
     res.status(500).send('Sorry, something went wrong');
     return;
   }
 
   const searchedCity = req.query.city; //comes from the front-end, req.query is the way we get data from the front-end.
   console.log(searchedCity);
-  const key = process.env.GEOCODE_API_KEY;
+  const locationApiKey = process.env.GEOCODE_API_KEY;
 
-  const url = `https://us1.locationiq.com/v1/search.php?key=${key}&q=${searchedCity}&format=json`;
+  const url = `https://us1.locationiq.com/v1/search.php?key=${locationApiKey}&q=${searchedCity}&format=json`;
 
   superagent.get(url)
     .then(result => {
       const dataObjFromJson = result.body[0];   //TODO: see video to see where .body comes from
-    
 
-  const newLocation = new Location(
-    searchedCity,
-    dataObjFromJson.display_name,
-    dataObjFromJson.lat,
-    dataObjFromJson.lon
-  );
-  res.send(newLocation);
-})
-  .catch(error => {
-    res.status(500).send('LocationIQ failed');
-    console.log(error.message)
-  });
+
+      const newLocation = new Location(
+        searchedCity,
+        dataObjFromJson.display_name,
+        dataObjFromJson.lat,
+        dataObjFromJson.lon
+      );
+      res.send(newLocation);
+    })
+    .catch(error => {
+      res.status(500).send('LocationIQ failed');
+      console.log(error.message);
+    });
 });
 
 app.get('/weather', (req, res) => {
   const weatherData = require('./data/weather.json');
-  const arr = weatherData.data.map(weatherObject => {
-    const newWeatherObj = new Weather(weatherObject);
-    return newWeatherObj;
-  });
-  res.send(arr);
+  const searchedCity = req.query.city;
+  console.log(searchedCity);
+  const weatherApiKey = process.env.WEATHER_API_KEY;
+
+  const url = `https://api.weatherbit.io/v2.0/current?lat=${latitude}&lon=${longitude}&key=${weatherApiKey}&include=minutely`;
+
+  superagent.get(url)
+    .then(result => {
+      console.log(result.body);
+
+      const arr = weatherData.data.map(weatherObject => {
+        const newWeatherObj = new Weather(weatherObject);
+        return newWeatherObj;
+      });
+      res.send(arr);
+    })
+    .catch(error => {
+      res.status(500).send('Weatherbit failed');
+      console.log(error.message);
+    });
 });
 
 
