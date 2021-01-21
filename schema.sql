@@ -6,6 +6,7 @@ CREATE TABLE location(
   formatted_query VARCHAR(255),
   latitude DECIMAL(18, 15),
   longitude DECIMAL(18, 15)
+
 )
 
 

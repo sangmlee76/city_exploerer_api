@@ -27,14 +27,13 @@ app.get('/weather', getWeather);
 app.get('/parks', getParks);
 
 
-
-//--Route Callback: /location--//
+//--Route Callback: '/location'--//
 function getGpsCoordinates(req, res) {
   const searchedCity = req.query.city; //req.query is the way we get data from the front-end.
   // console.log(searchedCity);
   const locationApiKey = process.env.GEOCODE_API_KEY;
 
-  const sqlQuery = 'SELECT * FROM city_explorer WHERE search_query=$1';
+  const sqlQuery = 'SELECT * FROM location WHERE search_query=$1';
   const sqlArray = [searchedCity]; //TODO: get clarification on this line of code
 
   client.query(sqlQuery, sqlArray)
@@ -55,7 +54,7 @@ function getGpsCoordinates(req, res) {
 
         superagent.get(url)
           .then(result => {
-            const dataObjFromJson = result.body[0];   //TODO: see video to see where .body comes from --> @ 3:40.
+            const dataObjFromJson = result.body[0]; //TODO: see video to see where .body comes from --> @ 3:40.
             const newLocation = new Location(
               searchedCity,
               dataObjFromJson.display_name,
@@ -100,7 +99,7 @@ function getGpsCoordinates(req, res) {
     });
 }
 
-//--Route Callback: /weather--//
+//--Route Callback: '/weather'--//
 function getWeather(req, res) {
   const searchedCity = req.query.search_query;
   // console.log('*********** CITY*************' , searchedCity);
@@ -121,7 +120,7 @@ function getWeather(req, res) {
     });
 }
 
-//--Route Callback: /parks--//
+//--Route Callback: '/parks'--//
 function getParks(req, res) {
   const searchedCity = req.query.search_query;
   // console.log('********** CITY ***********', searchedCity);
@@ -159,8 +158,8 @@ function Weather(weatherObject) {
 
 function Park(parkObject) {
   this.name = parkObject.name;
-  this.address = parkObject.address;
-  this.fee = parkObject.fee;
+  this.address = parkObject.addresses[0];
+  this.fee = parkObject.entrancefee[0].cost;
   this.description = parkObject.description;
   this.url = parkObject.url;
 }
