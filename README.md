@@ -1,5 +1,5 @@
 **Author**: Sang Lee | sanglee76@yahoo.com
-**Version**: 1.1.0 
+**Version**: 1.2.0
 <!--(increment the patch/fix version number if you make more commits past your first submission)-->
 
 ## Overview
@@ -14,14 +14,12 @@ Build a stand-alone back end which will interact with a static front end. It wil
 <!-- Provide a detailed description of the application design. What technologies (languages, libraries, etc) you're using, and any other relevant design information. -->
 
 ## Change Log
-01-18-2021 1100PST - Application now has a fully-functional express server, with a GET route for the location resource.
 
-01-19-2021 2119PST - /location route with LocationIQ complete
+01-18-2021 2300PST - Application now has a fully-functional express server, with a GET route for the location resource.
 
-01-19-2021 2210PST - /weather route with Weatherbit complete
+01-19-2021 2330PST - updated with location, weather, and parks API routes
 
-01-19-2021 PST - /parks route with NPS 
-
+01-20-2021 1700PST - refactored all routes from previous labs and cleaned up code; set up for adding the new pg route for today's lab
 
 
 ## Credits and Collaborations
@@ -33,9 +31,9 @@ Build a stand-alone back end which will interact with a static front end. It wil
 
 ***
 
-### Time Estimates (Lab-06)
+### Time Estimates (Lab-06 -> Lab 9)
 
-1. Number and name of feature: ________________________________
+1. Number and name of feature: _______Lab 7__________________
 
     - Estimate of time needed to complete: _3.5hrs____
 
@@ -45,7 +43,7 @@ Build a stand-alone back end which will interact with a static front end. It wil
 
     - Actual time needed to complete: _3.5hrs____
 
-2. Number and name of feature: ________________________________
+2. Number and name of feature: ______Lab 8_____________________
 
     - Estimate of time needed to complete: _____
 
@@ -64,7 +62,7 @@ Build a stand-alone back end which will interact with a static front end. It wil
     - Finish time: _____
 
     - Actual time needed to complete: _____
-  
+
 4. Number and name of feature: ________________________________
 
     - Estimate of time needed to complete: _____
