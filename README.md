@@ -21,6 +21,9 @@ Build a stand-alone back end which will interact with a static front end. It wil
 
 01-20-2021 1700PST - refactored all routes from previous labs and cleaned up code; set up for adding the new pg route for today's lab
 
+01-20-2021 2338PST - created db and made it persistent per instructions.  Relied heavily on the lecture video. There is a bug and the app is not working properly -- requires fixing with help tomorrow.
+
+
 
 ## Credits and Collaborations
 <!-- Give credit (and a link) to other people or resources that helped you build this application. -->
@@ -47,11 +50,11 @@ Build a stand-alone back end which will interact with a static front end. It wil
 
     - Estimate of time needed to complete: _____
 
-    - Start time: _____
+    - Start time: _15:45____
 
-    - Finish time: _____
+    - Finish time: _23:37 (break from 17:00 - 20:30)____
 
-    - Actual time needed to complete: _____
+    - Actual time needed to complete: __4___
 
 3. Number and name of feature: ________________________________
 
