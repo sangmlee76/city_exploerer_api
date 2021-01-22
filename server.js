@@ -11,7 +11,7 @@ const pg = require('pg');
 const app = express();
 app.use(cors());
 
-const DATABASE_URL = process.env.DATABSE_URL;
+const DATABASE_URL = process.env.DATABASE_URL;
 const client = new pg.Client(DATABASE_URL);
 client.on('error', (error) => console.log(error));
 
@@ -25,7 +25,13 @@ const PORT = process.env.PORT || 3111;
 app.get('/location', getGpsCoordinates);
 app.get('/weather', getWeather);
 app.get('/parks', getParks);
+app.get('/movies', getMovies)
 
+//--Route Callback: 'front-end link'--//
+//This code block is Stephen's great idea to keep front-end link nearby (obtained with permission during code review)
+app.get('/', (request, response) => {
+  response.send('Frontend here --> https://codefellows.github.io/code-301-guide/curriculum/city-explorer-app/front-end/');
+});
 
 //--Route Callback: '/location'--//
 function getGpsCoordinates(req, res) {
@@ -33,12 +39,12 @@ function getGpsCoordinates(req, res) {
   // console.log(searchedCity);
   const locationApiKey = process.env.GEOCODE_API_KEY;
 
-  const sqlQuery = 'SELECT * FROM location WHERE search_query=$1';
+  const sqlQuery = 'SELECT * FROM location WHERE search_query=$1'; //$1 is expecting an array to be passed in to know what to replace the $x with. Index 0 = $1 -- order matters!
   const sqlArray = [searchedCity]; //TODO: get clarification on this line of code
 
-  client.query(sqlQuery, sqlArray)
+  client.query(sqlQuery, sqlArray) //
     .then(result => {
-      console.log('result.rows', result.rows); //TODO: Did not get an empty array returned, there is an error that is crashing the app
+      // console.log('result.rows', result.rows);
 
       if (result.rows.length !== 0) {
         console.log('It exists already');
@@ -61,6 +67,13 @@ function getGpsCoordinates(req, res) {
               dataObjFromJson.lat,
               dataObjFromJson.lon
             );
+            // saves each query data into the database in the table
+            const sqlQuery = 'INSERT INTO location (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4)';
+
+            const sqlArray = [newLocation.search_query, newLocation.formatted_query, newLocation.latitude, newLocation.longitude];
+
+            client.query(sqlQuery, sqlArray);
+
             res.send(newLocation);
           })
           .catch(error => {
@@ -72,31 +85,6 @@ function getGpsCoordinates(req, res) {
     });
 
 
-
-  const url = `https://us1.locationiq.com/v1/search.php?key=${locationApiKey}&q=${searchedCity}&format=json`;
-
-  superagent.get(url)
-    .then(result => {
-      const dataObjFromJson = result.body[0];   //TODO: see video to see where .body comes from --> @ 3:40.
-      const newLocation = new Location(
-        searchedCity,
-        dataObjFromJson.display_name,
-        dataObjFromJson.lat,
-        dataObjFromJson.lon
-      );
-
-      // saves each query data into the database in the table
-      const sqlQuery = 'INSERT INTO location (search_query, formatted_query, latitude, longitude) VALUES($1, $2, $3, $4)';
-      const sqlArray = [newLocation.search_query, newLocation.formatted_query, newLocation.latitude, newLocation.longitude];
-
-      client.query(sqlQuery, sqlArray);
-
-      res.send(newLocation);
-    })
-    .catch(error => {
-      res.status(500).send('LocationIQ failed');
-      console.log(error.message);
-    });
 }
 
 //--Route Callback: '/weather'--//
@@ -106,12 +94,12 @@ function getWeather(req, res) {
   const weatherApiKey = process.env.WEATHER_API_KEY;
   const latitude = req.query.latitude;
   const longitude = req.query.longitude;
-  const url = `https://api.weatherbit.io/v2.0/forecast/daily?days=8&city=${searchedCity}&country=US&key=${weatherApiKey}`
+  const url = `https://api.weatherbit.io/v2.0/forecast/daily?days=8&city=${searchedCity}&country=US&key=${weatherApiKey}`;
 
   superagent.get(url)
     .then(result => {
       // console.log(result.body);
-      const arr = result.body.data.map(weatherObject => new Weather(weatherObject));  // recall: a single line arrow function has an implied 'return'
+      const arr = result.body.data.map(weatherObject => new Weather(weatherObject));  // RECALL: a single line arrow function has an implied 'return'
       res.send(arr);
     })
     .catch(error => {
@@ -127,7 +115,7 @@ function getParks(req, res) {
   const parksApiKey = process.env.PARKS_API_KEY;
   const url = `https://developer.nps.gov/api/v1/parks?q=${searchedCity}&api_key=${parksApiKey}&limit=10`;
 
-  superagent.get(url) //TODO: Not all the data is coming back so need to investigate this
+  superagent.get(url)
     .then(result => {
       // console.log(result.body);
       const arr = result.body.data.map(parkObject => new Park(parkObject));
@@ -138,6 +126,31 @@ function getParks(req, res) {
       console.log(error.message);
     });
 }
+
+//--Route Callback: '/movie'--//
+function getMovies(req, res) {
+  const searchedCity = req.query.search_query;
+  // console.log('*************CITY**********', searchedCity);
+  const moviesApiKey = process.env.MOVIE_API_KEY;
+  const url = `https://api.themoviedb.org/3/search/movie?api_key=${moviesApiKey}&language=en-US&query=${searchedCity}`;
+
+  superagent.get(url)
+    .then(result => {
+      // console.log(result.body);
+      const arr = result.body.results.map(movieObject => new Movie(movieObject));
+      res.send(arr);
+    })
+    .catch(error => {
+      res.status(500).send('MovieDB failed');
+      console.log(error.message);
+    });
+
+}
+
+
+//--Route Calback: '/yelp'--//
+
+
 
 
 //========= Helper Functions =========//
@@ -157,18 +170,31 @@ function Weather(weatherObject) {
 }
 
 function Park(parkObject) {
-  this.name = parkObject.name;
-  this.address = parkObject.addresses[0];
-  this.fee = parkObject.entrancefee[0].cost;
+  // console.log('****************', parkObject); //KEY: this is how you check for debugging if you are getting the data in results.body
+  this.name = parkObject.fullName;
+  this.address = `${parkObject.addresses[0].line1}, ${parkObject.addresses[0].city}, ${parkObject.addresses[0].stateCode}, ${parkObject.addresses[0].postalCode}`;
+  this.fee = parkObject.entranceFees[0].cost;
   this.description = parkObject.description;
   this.url = parkObject.url;
 }
 
-
+function Movie(movieObject) {
+  // console.log(movieObject);
+  this.title = movieObject.title;
+  this.overview = movieObject.overview;
+  this.average_votes = movieObject.vote_average;
+  this.total_votes = movieObject.vote_count;
+  this.image_url = movieObject.image_url;
+  this.popularity = movieObject.popularity;
+  this.released_on = movieObject.release_date;
+}
 
 //=========== Start Server ===========//
-client.connect();
-app.listen(PORT, () => console.log(`we are up on PORT ${PORT}`));
+client.connect()
+  .then(() => {
+    app.listen(PORT, () => console.log(`we are up on PORT ${PORT}`));
+  });
+
 
 
 /////////// PG SQL Set-up Steps ///////
@@ -179,7 +205,13 @@ app.listen(PORT, () => console.log(`we are up on PORT ${PORT}`));
 // 5. add to our route a check for if there is data in the db
 // 6. create the table
 // 7. create a schema.sql file
-// 8. run the schema.sql file with psql -d city_explorer -f schema.sql
+// 8. run the schema.sql file with psql -d city_explorer -f schema.sql (this connects the front-end to the server to the db --> TODO: validate this)
 // 9. add to our route a check for if there is data in the db
 // 10. check the table for the location
 
+/////////// Key console.logs for debugging ///////////////
+// 1. console.log related to reg.query to get the city attribute label
+// 2. console.log following superagent call, after the .then()
+// 3. console.log following client.query (for pgsql), to check the value of result.row
+// 4. console.log for error messaging following .catch() or other error prompt that you want to provide for clarity
+// 5. console.log in constructor function to pass in the obj data to see what is being pulled in -- this is the best way to get detailed API results to see json data structure.
