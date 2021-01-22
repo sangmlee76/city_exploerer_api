@@ -7,7 +7,12 @@ Provides a web-app that provides a user with access to local area "things to do"
 <!-- Provide a high level overview of what this application is and why you are building it, beyond the fact that it's an assignment for this class. (i.e. What's your problem domain?) -->
 
 ## Getting Started
-Build a stand-alone back end which will interact with a static front end. It will request data from a total of six third-party APIs, modify the data as needed, and send the data to the client to be displayed in the browser. In subsequent updates (by 22 Jan 21 ), it will be persisting data in a SQL database.
+- install the node modules
+- set up a port
+- get API keys
+- generate a .env with variables of ...
+- get a connection string for the database url
+
 <!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
 
 ## Architecture
