@@ -25,7 +25,8 @@ const PORT = process.env.PORT || 3111;
 app.get('/location', getGpsCoordinates);
 app.get('/weather', getWeather);
 app.get('/parks', getParks);
-app.get('/movies', getMovies)
+app.get('/movies', getMovies);
+app.get('/yelp', getRestaurants);
 
 //--Route Callback: 'front-end link'--//
 //This code block is Stephen's great idea to keep front-end link nearby (obtained with permission during code review)
@@ -40,7 +41,7 @@ function getGpsCoordinates(req, res) {
   const locationApiKey = process.env.GEOCODE_API_KEY;
 
   const sqlQuery = 'SELECT * FROM location WHERE search_query=$1'; //$1 is expecting an array to be passed in to know what to replace the $x with. Index 0 = $1 -- order matters!
-  const sqlArray = [searchedCity]; //TODO: get clarification on this line of code
+  const sqlArray = [searchedCity]; //TODO: get clarification on this line of code, what's really happening here?
 
   client.query(sqlQuery, sqlArray) //
     .then(result => {
@@ -149,7 +150,24 @@ function getMovies(req, res) {
 
 
 //--Route Calback: '/yelp'--//
+function getRestaurants(req, res) {
+  const searchedCity = req.query.search_query;
+  // console.log('************CITY**************', searchedCity)
+  const yelpApiKey = process.env.YELP_API_KEY;
+  const url = `https://api.yelp.com/v3/businesses/search?location.city=${searchedCity}&locale=en_US`;
 
+  superagent.get(url)
+    .set('Authorization', `Bearer ${yelpApiKey}`)
+    .then(result => {
+      // console.log(result.body);
+      const arr = result.body.data.map(restaurantObject => new Restaurant(restaurantObject));
+      res.send(arr);
+    })
+    .catch(error => {
+      res.status(500).send('Yelp failed');
+      console.log(error.message);
+    });
+}
 
 
 
@@ -187,6 +205,15 @@ function Movie(movieObject) {
   this.image_url = movieObject.image_url;
   this.popularity = movieObject.popularity;
   this.released_on = movieObject.release_date;
+}
+
+function Restaurant(restaurantObject) {
+  //console.log(restaurantObject);
+  this.name = restaurantObject.name;
+  this.image_url = restaurantObject.image_url;
+  this.price = restaurantObject.price;
+  this.rating = restaurantObject.rating;
+  this.url = restaurantObject.url
 }
 
 //=========== Start Server ===========//
