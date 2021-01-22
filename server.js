@@ -69,11 +69,11 @@ function getGpsCoordinates(req, res) {
               dataObjFromJson.lon
             );
             // saves each query data into the database in the table
-            const sqlQuery = 'INSERT INTO location (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4)';
+            const sqlQuery = 'INSERT INTO location (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4)'; // this just builds a "template" of the query so pg knows which table columns to bring in the data
 
-            const sqlArray = [newLocation.search_query, newLocation.formatted_query, newLocation.latitude, newLocation.longitude];
+            const sqlArray = [newLocation.search_query, newLocation.formatted_query, newLocation.latitude, newLocation.longitude]; //this is the data that we need to get from the API to populate the database in the condition (e.g. from the "if" above) where this data (query result) doesn't already  exist.
 
-            client.query(sqlQuery, sqlArray);
+            client.query(sqlQuery, sqlArray); //this code executes the database update - think of this as mustache. You are taking a template and a values array (it MUST be an array for SQL DBs) in order to execute the update.
 
             res.send(newLocation);
           })
@@ -137,7 +137,7 @@ function getMovies(req, res) {
 
   superagent.get(url)
     .then(result => {
-      // console.log(result.body);
+      console.log(result.body);
       const arr = result.body.results.map(movieObject => new Movie(movieObject));
       res.send(arr);
     })
@@ -154,19 +154,20 @@ function getRestaurants(req, res) {
   const searchedCity = req.query.search_query;
   // console.log('************CITY**************', searchedCity)
   const yelpApiKey = process.env.YELP_API_KEY;
-  const url = `https://api.yelp.com/v3/businesses/search?location.city=${searchedCity}&locale=en_US`;
+  const url = `https://api.yelp.com/v3/businesses/search?term=restaurants&location=${searchedCity}&locale=en_US&limit=5`;
 
   superagent.get(url)
     .set('Authorization', `Bearer ${yelpApiKey}`)
     .then(result => {
       // console.log(result.body);
-      const arr = result.body.data.map(restaurantObject => new Restaurant(restaurantObject));
+      const arr = result.body.businesses.map(restaurantObject => new Restaurant(restaurantObject));
       res.send(arr);
     })
     .catch(error => {
       res.status(500).send('Yelp failed');
       console.log(error.message);
     });
+
 }
 
 
@@ -219,8 +220,10 @@ function Restaurant(restaurantObject) {
 //=========== Start Server ===========//
 client.connect()
   .then(() => {
-    app.listen(PORT, () => console.log(`we are up on PORT ${PORT}`));
+    app.listen(PORT, () => console.log(`we are up on PORT ${PORT}`))
+    // .catch(err => console.error(err));   // TODO: this is throwing an error that I cannot figure out
   });
+
 
 
 

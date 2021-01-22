@@ -7,7 +7,7 @@ CREATE TABLE location(
   latitude DECIMAL(18, 15),
   longitude DECIMAL(18, 15)
 
-)
+);
 
 
 
