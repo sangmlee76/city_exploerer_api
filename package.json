@@ -1,5 +1,5 @@
 {
-  "name": "city_exploerer_api",
+  "name": "city_explorer_api",
   "version": "1.0.0",
   "description": "**Author**: Your Name Goes Here **Version**: 1.0.0 (increment the patch/fix version number if you make more commits past your first submission)",
   "main": "server.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sangmlee76/city_exploerer_api.git"
+    "url": "git+https://github.com/sangmlee76/city_explorer_api.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/sangmlee76/city_exploerer_api/issues"
+    "url": "https://github.com/sangmlee76/city_explorer_api/issues"
   },
-  "homepage": "https://github.com/sangmlee76/city_exploerer_api#readme",
+  "homepage": "https://github.com/sangmlee76/city_explorer_api#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
