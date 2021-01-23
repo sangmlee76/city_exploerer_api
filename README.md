@@ -1,5 +1,5 @@
 **Author**: Sang Lee | sanglee76@yahoo.com
-**Version**: 1.2.0
+**Version**: 1.3.0
 <!--(increment the patch/fix version number if you make more commits past your first submission)-->
 
 ## Overview
@@ -28,6 +28,9 @@ Provides a web-app that provides a user with access to local area "things to do"
 
 01-20-2021 2338PST - created db and made it persistent per instructions.  Relied heavily on the lecture video. There is a bug and the app is not working properly -- requires fixing with help tomorrow.
 
+01-21-2021 2330 - completed creating new routes for /movie and /yelp. Both are not working fully.
+
+01-23-2021 14:20 - completed the bugs for /movie and /yelp. App is functional to the requirements.
 
 
 ## Credits and Collaborations
@@ -53,30 +56,21 @@ Provides a web-app that provides a user with access to local area "things to do"
 
 2. Number and name of feature: ______Lab 8_____________________
 
-    - Estimate of time needed to complete: _____
+    - Estimate of time needed to complete: __5 hrs___
 
     - Start time: _15:45____
 
     - Finish time: _23:37 (break from 17:00 - 20:30)____
 
-    - Actual time needed to complete: __4___
+    - Actual time needed to complete: __4 hrs___
 
-3. Number and name of feature: ________________________________
+3. Number and name of feature: ___________Lab 9_____________________
 
-    - Estimate of time needed to complete: _____
+    - Estimate of time needed to complete: __4 hrs___
 
-    - Start time: _____
+    - Start time: __8:30p___
 
-    - Finish time: _____
+    - Finish time: __various___
 
-    - Actual time needed to complete: _____
+    - Actual time needed to complete: __4 hours___
 
-4. Number and name of feature: ________________________________
-
-    - Estimate of time needed to complete: _____
-
-    - Start time: _____
-
-    - Finish time: _____
-
-    - Actual time needed to complete: _____
