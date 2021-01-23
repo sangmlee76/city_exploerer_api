@@ -61,7 +61,7 @@ function getGpsCoordinates(req, res) {
 
         superagent.get(url)
           .then(result => {
-            const dataObjFromJson = result.body[0]; //TODO: see video to see where .body comes from --> @ 3:40.
+            const dataObjFromJson = result.body[0]; //TODO: see video to see where .body comes from --> @ 3:40. Based on documentation (http://expressjs.com/en/api.html and http://expressjs.com/en/resources/middleware/body-parser.html), it seems like this is a method that is part of a built-in function, called body-parser, from express.
             const newLocation = new Location(
               searchedCity,
               dataObjFromJson.display_name,
@@ -137,7 +137,7 @@ function getMovies(req, res) {
 
   superagent.get(url)
     .then(result => {
-      console.log(result.body);
+      // console.log(result.body);
       const arr = result.body.results.map(movieObject => new Movie(movieObject));
       res.send(arr);
     })
@@ -153,14 +153,17 @@ function getMovies(req, res) {
 function getRestaurants(req, res) {
   const searchedCity = req.query.search_query;
   // console.log('************CITY**************', searchedCity)
+  const page = req.query.page;
+  const offset = (page-1)*5;
   const yelpApiKey = process.env.YELP_API_KEY;
-  const url = `https://api.yelp.com/v3/businesses/search?term=restaurants&location=${searchedCity}&locale=en_US&limit=5`;
+  const url = `https://api.yelp.com/v3/businesses/search?term=restaurants&location=${searchedCity}&locale=en_US&limit=5&offset=${offset}`;
 
   superagent.get(url)
     .set('Authorization', `Bearer ${yelpApiKey}`)
     .then(result => {
       // console.log(result.body);
       const arr = result.body.businesses.map(restaurantObject => new Restaurant(restaurantObject));
+      // console.log(arr);
       res.send(arr);
     })
     .catch(error => {
@@ -199,11 +202,13 @@ function Park(parkObject) {
 
 function Movie(movieObject) {
   // console.log(movieObject);
+  const moviePosterName = movieObject.poster_path; //poster's 'file_path' (e.g. name) exists as one of the returned keys from the API; it is the *name* of the poster that we want to get.
+  const moviePosterImageUrl = `https://image.tmdb.org/t/p/w500/${moviePosterName}`; // using this base url provided from moviedb documentation (ref: https://developers.themoviedb.org/4/getting-started/images), we replace the poster name associated with each movie into the Url to complete the Url. This is needed to call the "/configuration API" to get the actual image file that we need from the image API.
   this.title = movieObject.title;
   this.overview = movieObject.overview;
   this.average_votes = movieObject.vote_average;
   this.total_votes = movieObject.vote_count;
-  this.image_url = movieObject.image_url;
+  this.image_url = moviePosterImageUrl; //this will allow us to build the image for each poster with each instantiation of a Movie through the contructor function. This then will be passed back to the front end since they will be looking for the "image_url" key (this was defined as part of the dev requirement -- Trello-Lab9-Task1)
   this.popularity = movieObject.popularity;
   this.released_on = movieObject.release_date;
 }
@@ -240,8 +245,9 @@ client.connect()
 // 10. check the table for the location
 
 /////////// Key console.logs for debugging ///////////////
-// 1. console.log related to reg.query to get the city attribute label
-// 2. console.log following superagent call, after the .then()
-// 3. console.log following client.query (for pgsql), to check the value of result.row
-// 4. console.log for error messaging following .catch() or other error prompt that you want to provide for clarity
-// 5. console.log in constructor function to pass in the obj data to see what is being pulled in -- this is the best way to get detailed API results to see json data structure.
+// 1. console.log(req.query) related to to see the data coming from the front end
+// 2. console.log(result.body) following superagent call, after the .then(), to see the data coming back from the API
+// 3. console.log(result.row) following client.query (for pgsql), to check the value of the SQL table row to see if it has data or is empty (depending on what you are trying to accomplish)
+// 4. console.log(error.message) for sending an error message to terminal, following .catch(), can use other error prompt/string that you want to provide for clarity. TODO: the one for the start server is not working in my current code
+// 5. consle.log(<reponseArray>) to check the data that is going to be sent back to the front end, place it before the res.send(<responseArray>).
+// 6. console.log(<nameOfParameter>) inside the constructor function to pass in the obj data to see what is being pulled in from the API, this is similar to result.body but used to troubleshoot how far the data is getting once retrieved (e.g. is it making it through the constructor or not) -- this is another best way to get fully detailed API results to see json data structure.
