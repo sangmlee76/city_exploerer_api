@@ -41,7 +41,7 @@ function getGpsCoordinates(req, res) {
   const locationApiKey = process.env.GEOCODE_API_KEY;
 
   const sqlQuery = 'SELECT * FROM location WHERE search_query=$1'; //$1 is expecting an array to be passed in to know what to replace the $x with. Index 0 = $1 -- order matters!
-  const sqlArray = [searchedCity]; //TODO: get clarification on this line of code, what's really happening here?
+  const sqlArray = [searchedCity];
 
   client.query(sqlQuery, sqlArray) //
     .then(result => {
@@ -226,8 +226,7 @@ function Restaurant(restaurantObject) {
 client.connect()
   .then(() => {
     app.listen(PORT, () => console.log(`we are up on PORT ${PORT}`))
-    // .catch(err => console.error(err));   // TODO: this is throwing an error that I cannot figure out
-  });
+  }).catch(err => console.error(err));
 
 
 
