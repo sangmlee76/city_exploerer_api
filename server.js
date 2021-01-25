@@ -36,6 +36,7 @@ app.get('/', (request, response) => {
 
 //--Route Callback: '/location'--//
 function getGpsCoordinates(req, res) {
+  console.log('I HAVE ENTERED THE GET GPS FUNCTION')
   const searchedCity = req.query.city; //req.query is the way we get data from the front-end.
   // console.log(searchedCity);
   const locationApiKey = process.env.GEOCODE_API_KEY;
